@@ -1,29 +1,29 @@
 import { Middleware } from 'redux'
-import { socketActions } from 'src/store/constants/socketConstants'
 import { Socket, io } from 'socket.io-client'
-import { socketConnected, socketConnecting } from 'src/store/slice/socketSlice'
+import {
+  socketConnected,
+  socketConnecting,
+  socketGreet,
+  socketActions,
+} from 'src/store/slice/socketSlice'
 
-export const socketMiddleware: Middleware =
-  ({ dispatch, getState }) =>
-  (next) =>
-  (action) => {
-    console.log({ socketAction: action })
-    //@ts-ignore
-    let socket: Socket = null
-    if (socketActions.includes(action.type)) {
-      if (socket !== null) {
-        socket?.close()
-      }
+export const socketMiddleware: Middleware = ({ dispatch, getState }) => {
+  let socket: Socket
+  return (next) => (action) => {
+    // Socket
+    const isConnected = getState().socket.isConnected && socket
 
+    if (socketActions.socketConnecting.match(action)) {
       socket = io('http://localhost:8000', {
-        reconnection: true,
         path: '/ws/socket.io',
       })
-
       socket.on('connect', () => {
-        dispatch(socketConnected(socket))
+        dispatch(socketConnected(''))
         console.log('socket connected!!')
       })
+    }
+
+    if (socketActions.socketDisconnected.match(action)) {
       socket.on('disconnect', () => {
         socket.close()
         //@ts-ignore
@@ -31,6 +31,15 @@ export const socketMiddleware: Middleware =
         console.log('socket disconnected!!')
       })
     }
-    const result = next(action)
-    return result
+
+    if (socketActions.socketGreet.match(action) && isConnected) {
+      socket.emit('greet', action.payload)
+      if (!socket.hasListeners('greet')) {
+        socket.on('greet', (data) => console.log(data))
+      }
+    }
+
+    // Socket Ends
+    next(action)
   }
+}

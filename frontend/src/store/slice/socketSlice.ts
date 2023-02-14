@@ -1,5 +1,3 @@
-import { WSCONNECTED } from 'src/store/constants/socketConstants'
-import { Reducer } from 'redux'
 import { createSlice, Slice } from '@reduxjs/toolkit'
 
 type InitialState = {
@@ -37,10 +35,19 @@ export const socketSlice: Slice = createSlice({
     },
     socketConnecting: (state, action) => {
       const { payload } = action
-      return { ...state, isConnecting: true, socket: null, isConnected: false }
+      return state
+    },
+    startConnecting: (state) => {
+      state.isEstablishingConnection = true
+    },
+    socketGreet: (state, action) => {
+      return state
     },
   },
 })
 
-export const { socketConnected, socketConnecting } = socketSlice.actions
+export const { socketConnected, socketConnecting, socketGreet } =
+  socketSlice.actions
+export const socketActions = socketSlice.actions
+
 export const socketSliceReducer = socketSlice.reducer

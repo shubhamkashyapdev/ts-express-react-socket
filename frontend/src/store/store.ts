@@ -4,7 +4,9 @@ import rootReducer from 'src/store/rootReducer'
 
 const store = configureStore({
   reducer: rootReducer,
-  middleware: [socketMiddleware],
+  middleware: (getDefaultMiddleware) => {
+    return getDefaultMiddleware().concat([socketMiddleware])
+  },
 })
 
 export default store
