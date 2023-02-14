@@ -1,18 +1,13 @@
 import { createSlice, Slice } from '@reduxjs/toolkit'
+import { InitialState } from 'src/store/types'
 
-type InitialState = {
-  isConnecting: boolean
-  isConnected: boolean
-  socket: null
-}
-
-const initialState = {
+const initialState: InitialState = {
   isConnecting: false,
   isConnected: false,
   socket: null,
 }
 
-export const socketSlice: Slice = createSlice({
+export const socketSlice: Slice<InitialState> = createSlice({
   name: 'socketSlice',
   initialState,
   reducers: {
@@ -36,9 +31,6 @@ export const socketSlice: Slice = createSlice({
     socketConnecting: (state, action) => {
       const { payload } = action
       return state
-    },
-    startConnecting: (state) => {
-      state.isEstablishingConnection = true
     },
     socketGreet: (state, action) => {
       return state

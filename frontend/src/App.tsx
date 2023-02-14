@@ -4,11 +4,12 @@ import { io } from 'socket.io-client'
 import { RootState } from 'src/store/store'
 import { useDispatch } from 'react-redux'
 import { socketConnecting, socketGreet } from 'src/store/slice/socketSlice'
-
+import type { InitialState } from 'src/store/types'
 function App() {
+  const socket = useSelector<RootState>((state) => state.socket) as InitialState
+  console.log(socket.isConnected)
   const dispatch = useDispatch()
   const greet = () => {
-    console.log('try to greet')
     dispatch(socketGreet(''))
   }
 
